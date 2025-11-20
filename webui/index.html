@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>拼多多采集（授权版）</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="layout">
+    <div class="left">
+      <div class="card">
+        <h3>采集参数设置</h3>
+        <div class="form">
+          <label>商品关键词</label>
+          <input id="kw" class="param" placeholder="输入商品关键词，如：蓝牙耳机" />
+          <label>商品价格</label>
+          <input id="price" class="param" type="number" step="0.01" />
+          <label>商品已拼数量(件)</label>
+          <input id="pinned" class="param" type="number" step="1" />
+          <label>商品评价数量(条)</label>
+          <input id="reviews" class="param" type="number" step="1" />
+          <label>导出目录设置（运行需勾选）</label>
+          <div class="exportBox">
+            <div class="row">
+              <input id="exportDir" readonly placeholder="未选择目录，右侧点击设置" />
+              <button id="pickBtn">选择目录</button>
+            </div>
+            <div id="exportTip" class="muted">未选择目录，请点击右侧按钮设置</div>
+          </div>
+          <div class="row">
+            <button id="startBtn" class="primary">开始采集</button>
+            <button id="stopBtn" class="danger">停止采集</button>
+          </div>
+          <div id="tip" class="muted">提示：先点击桌面“采集浏览器”快捷方式，保持远程调试端口 9222。</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>软件授权信息</h3>
+        <div class="lic">
+          <div class="row"><div id="machine">机器码：</div><button id="copyMachineBtn" class="warn">复制</button></div>
+          <div id="licStatus">状态：未激活</div>
+          <div class="row">
+            <input id="licCode" placeholder="请输入激活码" />
+            <button id="activateBtn">激活</button>
+          </div>
+          <div id="remain" class="muted">剩余：--</div>
+          <!-- Customer-facing license info only - admin features removed -->
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h3>实时采集状态</h3>
+        <div class="stats">
+          <div class="metric"><div class="num" id="m_collected">0</div><div class="label">已采集数</div></div>
+          <div class="metric"><div class="num" id="m_avg_price">--</div><div class="label">平均价格</div></div>
+          <div class="metric"><div class="num" id="m_avg_pinned">--</div><div class="label">平均拼数</div></div>
+        </div>
+        <div class="now">
+          <div id="nowList" class="nowList">待机中…</div>
+        </div>
+        <div class="cardList" id="cardList"></div>
+      </div>
+
+      <div class="card">
+        <div class="head">
+          <h3>采集结果预览</h3>
+          <span class="badge" id="badgeCnt">已采集：0 条数据</span>
+        </div>
+        <div id="resultBox" class="resultBox">
+          <!-- 最近采集结果滚动展示区域 -->
+        </div>
+        <div class="row">
+          <button id="exportBtn">导出当前数据</button>
+          <button id="openBtn" class="warn">打开导出目录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer removed for customer interface -->
+
+  <!-- Disclaimer Modal -->
+  <div id="disclaimerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>软件使用免责声明</h2>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-text">
+          <h3>重要提示：请在使用本软件前仔细阅读</h3>
+          
+          <h4>软件用途</h4>
+          <p>本软件仅供用户进行合法的学习、研究、数据分析或个人使用。用户承诺严格遵守中华人民共和国及其他适用法律法规，不得利用本软件进行任何违法、违规或侵犯第三方合法权益的行为。</p>
+          
+          <h4>风险自担</h4>
+          <p>用户明确知悉并同意：使用本软件可能涉及第三方平台的相关规则和政策。因使用本软件而导致的任何风险，包括但不限于账户封禁、数据丢失、经济损失、法律纠纷或其他任何损害，均由用户自行承担，开发者对此不承担任何形式的责任。</p>
+          
+          <h4>知识产权与合规使用</h4>
+          <p>本软件采集的数据及内容均属于第三方平台及其用户所有，用户不得未经授权用于商业盈利、公开传播或侵犯他人合法权益。用户必须确保其使用行为符合平台使用协议及相关法律法规。</p>
+          
+          <h4>免责条款</h4>
+          <p>本软件按"现状"提供，开发者不保证软件功能完全无误，也不保证采集数据的完整性、准确性或及时性。开发者对因使用或无法使用本软件所造成的任何直接、间接、附带、特殊、衍生或惩罚性损害不承担任何责任，包括但不限于经济损失或数据损毁。</p>
+          
+          <h4>用户承诺</h4>
+          <p>使用本软件即视为用户已充分阅读、理解并同意本免责声明内容，并同意自行承担使用本软件的全部风险。如用户不同意本免责声明的全部条款，请立即停止使用本软件。</p>
+          
+          <h4>法律约束力</h4>
+          <p>若本免责声明的任何条款因法律法规或司法判决被认定为无效或不可执行，其余条款仍然有效并具有完全约束力。</p>
+        </div>
+        
+        <div class="disclaimer-checkbox">
+          <label>
+            <input type="checkbox" id="acceptDisclaimer" onclick="console.log('复选框被点击');">
+            我已阅读并同意《软件使用免责声明》
+          </label>
+          <div id="scrollIndicator" class="scroll-indicator" style="display: none;">
+            📜 请继续向下滚动阅读剩余内容
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="declineBtn" class="btn btn-danger" onclick="console.log('不同意按钮被点击');">不同意并退出</button>
+        <button id="acceptBtn" class="btn btn-primary" disabled onclick="console.log('同意按钮被点击');">同意并继续使用</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="enhanced-app.js"></script>
+</body>
+</html>
